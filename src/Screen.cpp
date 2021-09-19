@@ -24,36 +24,31 @@ namespace matteo {
     }
 
     // SDL_RENDERER_PRESENTVSYNC tells rendering to sync with display refresh rate (looks better)
-    SDL_Renderer* renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_PRESENTVSYNC);
-    SDL_Texture * texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, SCREEN_WIDTH, SCREEN_HEIGHT);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_PRESENTVSYNC);
+    m_texture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    if (renderer == NULL) {
+    if (m_renderer == NULL) {
       std::cout << "Could not create renderer." << std::endl;
       SDL_DestroyWindow(m_window);
       SDL_Quit();
       return false;
     }
 
-    if (texture == NULL) {
+    if (m_texture == NULL) {
       std::cout << "Could not create texture." << std::endl;
-      SDL_DestroyRenderer(renderer);
+      SDL_DestroyRenderer(m_renderer);
       SDL_DestroyWindow(m_window);
       SDL_Quit();
       return false;
     }
 
-    std::unique_ptr<Uint32> buffer(new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT]);
+    m_buffer = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
 
-    memset(buffer.get(), 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+    memset(m_buffer, 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
 
     for (int i = 0; i < SCREEN_WIDTH*SCREEN_HEIGHT; ++i) {
-      buffer.get()[i] = 0xFFF00FFF;
+      m_buffer[i] = 0xFFF00FFF;
     }
-
-    SDL_UpdateTexture(texture, NULL, buffer.get(), SCREEN_WIDTH * sizeof(Uint32));
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
 
     return true;
   }
@@ -70,10 +65,28 @@ namespace matteo {
     return true;
   }
 
-  bool Screen::setPixel(Uint32 x, Uint32 y, Uint8 red, Uint8 green, Uint8 blue) {
+  void Screen::setPixel(Uint32 x, Uint32 y, Uint8 red, Uint8 green, Uint8 blue) {
+    unsigned int color = 0;
 
-    return true;
+    color += red;
+    color <<= 8;
+    color += green;
+    color <<= 8;
+    color += blue;
+    color <<= 8;
+    color += 0xFF;
+
+    m_buffer[x + SCREEN_WIDTH * y] = color;
   }
+
+  void Screen::update() {
+    SDL_UpdateTexture(m_texture, NULL, m_buffer, SCREEN_WIDTH * sizeof(Uint32));
+    SDL_RenderClear(m_renderer);
+    SDL_RenderCopy(m_renderer, m_texture, NULL, NULL);
+    SDL_RenderPresent(m_renderer);
+  }
+
+
 
   bool Screen::close(){
     SDL_DestroyRenderer(m_renderer);
