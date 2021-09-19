@@ -4,8 +4,8 @@
 
 int main()
 {
-  const int SCREEN_WIDTH = 800;
-  const int SCREEN_HEIGHT = 800;
+  const int SCREEN_WIDTH = 1600;
+  const int SCREEN_HEIGHT = 1600;
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0 ) {
     std::cout << "SDL init failed" << std::endl;
@@ -42,8 +42,14 @@ int main()
   std::unique_ptr<Uint32> buffer(new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT]);
 
   // make screen black
-  memset(buffer.get(), 0xFF, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+  memset(buffer.get(), 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
 
+  // set individual pixel color to white
+  /* buffer.get()[SCREEN_WIDTH/2 + SCREEN_HEIGHT*SCREEN_WIDTH/2] = 0xFFFFFFFF; */
+
+  for (int i = 0; i < SCREEN_WIDTH*SCREEN_HEIGHT; ++i) {
+    buffer.get()[i] = 0xFFF00FFF;
+  }
 
   SDL_UpdateTexture(texture, NULL, buffer.get(), SCREEN_WIDTH * sizeof(Uint32));
   SDL_RenderClear(renderer);
