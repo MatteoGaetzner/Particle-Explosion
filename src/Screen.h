@@ -18,6 +18,7 @@ namespace matteo {
       Screen();
       bool init();
       bool processEvents();
+      bool setPixel(Uint32 x, Uint32 y, Uint8 red, Uint8 green, Uint8 blue);
       bool close();
   };
 }

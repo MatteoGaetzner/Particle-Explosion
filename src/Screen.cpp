@@ -70,6 +70,11 @@ namespace matteo {
     return true;
   }
 
+  bool Screen::setPixel(Uint32 x, Uint32 y, Uint8 red, Uint8 green, Uint8 blue) {
+
+    return true;
+  }
+
   bool Screen::close(){
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyTexture(m_texture);
