@@ -41,3 +41,7 @@ $(PRODUCT): $(OBJFILES)
 
 # Pulls in the .d files, much like #include works in a C or C++ program. However, this isn’t exactly what happens. If the .d files already exist, then they are simply included in the makefile, and Make reads the dependency information from them. However, if they don’t exist (as they won’t the first time Make is run using this makefile) Make will look to see if there is a rule to create them. There is (the last rule) so Make runs the command associated with that rule to create the .d files and then re-reads the whole makefile. This time the .d files do exist (because we just created them), so they are read by the simple include mechanism.
 -include $(DEPFILES)
+
+clean:
+	rm src/*.{o,d}
+	rm main.out
