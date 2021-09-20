@@ -8,9 +8,10 @@ LINKER := g++
 # In which directories should the compiler look for #include header files
 # Default: This directory
 INCDIRS := -I.
-# Compiler flags
-CXXFLAGS := -std=c++17 -Wall -Wextra -pedantic
+# Compiler flags - INCLUDES DEBUGGING FLAG -g, for production remove this!
+CXXFLAGS := -std=c++20 -Wall -Wextra -pedantic -g
 # Linker flags
+# If you use SDL2, uncomment the following line
 LINKERFLAGS := -lSDL2
 
 # Basically 'ls ./src/*.cpp', returns a list of all cpp files in the src directory and saves it in SRCFILES
