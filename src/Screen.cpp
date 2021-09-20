@@ -46,10 +46,6 @@ namespace matteo {
 
     memset(m_buffer, 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
 
-    for (int i = 0; i < SCREEN_WIDTH*SCREEN_HEIGHT; ++i) {
-      m_buffer[i] = 0xFFF00FFF;
-    }
-
     return true;
   }
 
@@ -66,8 +62,12 @@ namespace matteo {
   }
 
   void Screen::setPixel(Uint32 x, Uint32 y, Uint8 red, Uint8 green, Uint8 blue) {
-    unsigned int color = 0;
 
+    if (x >= Screen::SCREEN_WIDTH || y >= Screen::SCREEN_HEIGHT) {
+      return;
+    }
+
+    unsigned int color = 0;
     color += red;
     color <<= 8;
     color += green;
