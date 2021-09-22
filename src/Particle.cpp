@@ -32,8 +32,34 @@ void matteo::Particle::update(const int& elapsed) {
 
   polarToCartesian(m_speed, m_direction, m_x, m_y);
 
-  if (m_x > 1 || m_x < -1) {
-    cartesianToPolar(m_x, m_y, m_speed, m_direction);
+  // make particles bounce of the walls
+  if (m_x > 1) {
+    if (m_direction <= M_PI / 2) {
+      m_direction += M_PI / 2;
+    } else {
+      m_direction -= M_PI / 2;
+    }
+  }
+  if (m_x < -1) {
+    if (m_direction <= M_PI) {
+      m_direction -= M_PI / 2;
+    } else {
+      m_direction += M_PI / 2;
+    }
+  }
+  if (m_y > 1) {
+    if (m_direction <= 3 / 2 * M_PI) {
+      m_direction -= M_PI / 2;
+    } else {
+      m_direction += M_PI / 2;
+    }
+  }
+  if (m_y < -1) {
+    if (m_direction <= M_PI / 2) {
+      m_direction -= M_PI / 2;
+    } else {
+      m_direction += M_PI / 2;
+    }
   }
 }
 
