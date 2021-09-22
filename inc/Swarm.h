@@ -14,8 +14,10 @@ namespace matteo {
     public:
       Swarm();
       ~Swarm();
-      const static unsigned int N_PARTICLES = 5000;
+      const static unsigned int N_PARTICLES = 500;
       const Particle* getParticles();
+      void update();
+      void update(const int& colorseed);
   };
 
 }

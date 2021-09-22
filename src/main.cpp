@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "Screen.h"
-#include "Swarm.h"
+#include "../inc/Screen.h"
+#include "../inc/Swarm.h"
 
 int main()
 {
@@ -25,11 +25,10 @@ int main()
 
   while(not quit) {
     // Update particles
-    // Draw particles
     int elapsed = SDL_GetTicks();
-    unsigned char red = (int) floor(128 + 128 * sin(0.0005 * elapsed));
-    unsigned char green = (int) floor(128 + 128 * cos(0.0007 * elapsed));
-    unsigned char blue = (int) floor(128 + 128 * cos(0.0009 * elapsed));
+    // Make swarm colorful by setting the colorseed to the elapsed time so far
+    swarm.update(elapsed);
+    // Draw particles
     for (unsigned int i = 0; i < matteo::Swarm::N_PARTICLES; ++i) {
       matteo::Particle particle = particles[i];
 
@@ -37,16 +36,8 @@ int main()
       unsigned int x = (particle.m_x + 1) * matteo::Screen::SCREEN_WIDTH/2;
       unsigned int y = (particle.m_y + 1) * matteo::Screen::SCREEN_HEIGHT/2;
 
-      screen.setPixel(x, y, red, green, blue);
+      screen.setPixel(x, y, particle.m_red, particle.m_green, particle.m_blue);
     }
-
-    /* for (int y = 0; y < matteo::Screen::SCREEN_HEIGHT; ++y) { */
-    /*   for (int x = 0; x < matteo::Screen::SCREEN_WIDTH; ++x) { */
-    /*     // Trippy :D */
-    /*     /1* screen.setPixel(x,y, (x*red) % 256, (y * green) % 256, (x * y * blue) % 256); *1/ */
-    /*     screen.setPixel(x,y, red, green, blue); */
-    /*   } */
-    /* } */
 
     // Draw the screen
     screen.update();

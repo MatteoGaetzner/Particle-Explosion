@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
-#include "Screen.h"
+#include <stdlib.h>
+#include "../inc/Screen.h"
 
 namespace matteo {
   Screen::Screen()
@@ -84,6 +85,7 @@ namespace matteo {
     SDL_RenderClear(m_renderer);
     SDL_RenderCopy(m_renderer, m_texture, NULL, NULL);
     SDL_RenderPresent(m_renderer);
+    memset(m_buffer, 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
   }
 
 
