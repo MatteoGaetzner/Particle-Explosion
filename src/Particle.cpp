@@ -2,16 +2,22 @@
 #include <math.h>
 #include "../inc/Particle.h"
 
-void matteo::Particle::update() {
-  m_x += m_xspeed;
-  m_y += m_yspeed;
+/* Conversion from polar coordinates to cartesian coordinates, see:
+ * https://en.wikipedia.org/wiki/Polar_coordinate_system */
+void polarToCartesian(const float& speed, const float& direction, float& x, float& y) {
+  x += speed * cos(direction); // x = r * cos(phi)
+  y += speed * sin(direction); // y = r * sin(phi)
+}
 
-  if (m_x < -1 || m_x > 1) {
-    m_xspeed *= -1;
-  }
-  if (m_y < -1 || m_y > 1) {
-    m_yspeed *= -1;
-  }
+/* Conversion from cartesian coordinates to polar coordinates, see:
+ * https://en.wikipedia.org/wiki/Polar_coordinate_system */
+void cartesianToPolar(const float &x, const float &y, float& speed, float& direction) {
+  speed = sqrt(pow(x, 2) + pow(y, 2));
+  direction = atan2(y,x);
+}
+
+void matteo::Particle::update() {
+  polarToCartesian(m_speed, m_direction, m_x, m_y);
 }
 
 void matteo::Particle::update(const int& elapsed) {
@@ -24,14 +30,10 @@ void matteo::Particle::update(const int& elapsed) {
     m_blue = (int) floor(128 + 128 * sin(0.009 * elapsed * colorprimer));
   }
 
-  m_x += m_xspeed;
-  m_y += m_yspeed;
+  polarToCartesian(m_speed, m_direction, m_x, m_y);
 
-  if (m_x < -1 || m_x > 1) {
-    m_xspeed *= -1;
-  }
-  if (m_y < -1 || m_y > 1) {
-    m_yspeed *= -1;
+  if (m_x > 1 || m_x < -1) {
+    cartesianToPolar(m_x, m_y, m_speed, m_direction);
   }
 }
 

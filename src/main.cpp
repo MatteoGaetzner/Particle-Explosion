@@ -34,7 +34,7 @@ int main()
 
       // particle.m_x ∈ [-1,1] => (particle.m_x + 1) ∈ [0,2] => x ∈ [0, 2*SCREEN_WIDTH/2 = SCREEN_WIDTH]
       unsigned int x = (particle.m_x + 1) * matteo::Screen::SCREEN_WIDTH/2;
-      unsigned int y = (particle.m_y + 1) * matteo::Screen::SCREEN_HEIGHT/2;
+      unsigned int y = particle.m_y * matteo::Screen::SCREEN_WIDTH/2 + matteo::Screen::SCREEN_HEIGHT/2;
 
       screen.setPixel(x, y, particle.m_red, particle.m_green, particle.m_blue);
     }
