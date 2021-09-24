@@ -1,7 +1,7 @@
 #include <math.h>
 #include "../inc/Swarm.h"
 
-matteo::Swarm::Swarm() {
+matteo::Swarm::Swarm(): lastTime(0) {
   m_pParticles = new Particle[N_PARTICLES];
 }
 
@@ -13,20 +13,17 @@ const matteo::Particle* matteo::Swarm::getParticles() {
   return m_pParticles;
 }
 
-void matteo::Swarm::update() {
-  for (unsigned int i = 0; i < Swarm::N_PARTICLES; ++i) {
-    // update its position without changing its color
-    m_pParticles[i].update();
-  }
-}
-
-void matteo::Swarm::update(const int& colorseed) {
+void matteo::Swarm::update(const int& elapsed, const bool& colorful) {
+  const int interval = elapsed - lastTime;
   for (unsigned int i = 0; i < Swarm::N_PARTICLES; ++i) {
     // if the particles color is not primed, we prime it
     if (m_pParticles[i].colorprimer == 1) {
       m_pParticles[i].colorprimer = ((2.0 * rand())/RAND_MAX - 1) * M_PI / 2;
     }
+    // calculate time interval since last update
+    // so that particles move with a machine independent speed
     // if colorseed == 0, we set its color to white
-    m_pParticles[i].update(colorseed);
+    m_pParticles[i].update(elapsed, interval, colorful);
   }
+  lastTime = elapsed;
 }

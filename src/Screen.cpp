@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include "../inc/Screen.h"
 
+#define SCREEN_MODE SDL_WINDOW_ALLOW_HIGHDPI
+/* #define SCREEN_MODE SDL_FULLSCREEN */
+
 namespace matteo {
   Screen::Screen()
     :m_window(NULL), m_renderer(NULL),
@@ -17,7 +20,7 @@ namespace matteo {
       return false;
     }
 
-    m_window = SDL_CreateWindow("Particle Fire Explosion", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    m_window = SDL_CreateWindow("Particle Fire Explosion", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_MODE);
 
     if (m_window == NULL) {
       SDL_Quit();

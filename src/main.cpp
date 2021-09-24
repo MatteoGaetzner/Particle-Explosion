@@ -17,6 +17,7 @@ int main()
     std::cout << "Error initializing SDL." << std::endl;
   }
 
+  const bool COLORFUL = true;
   matteo::Swarm swarm;
 
   const matteo::Particle* const particles = swarm.getParticles();
@@ -27,7 +28,7 @@ int main()
     // Update particles
     int elapsed = SDL_GetTicks();
     // Make swarm colorful by setting the colorseed to the elapsed time so far
-    swarm.update(elapsed);
+    swarm.update(elapsed, COLORFUL);
     // Draw particles
     for (unsigned int i = 0; i < matteo::Swarm::N_PARTICLES; ++i) {
       matteo::Particle particle = particles[i];

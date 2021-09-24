@@ -51,5 +51,5 @@ $(OBJDIR)/%.d: $(SRCDIR)/%.cpp
 -include $(DEPFILES)
 
 clean:
-	rm $(OBJDIR)/*.{o,d}
+	rm {$(SRCDIR),$(OBJDIR)}/*.{o,d}
 	rm $(BINDIR)/main.out

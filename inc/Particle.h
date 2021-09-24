@@ -5,14 +5,16 @@
 #include <math.h>
 
 #define RANDOM_0_TO_1 ((2.0 * rand())/RAND_MAX) - 1
-#define SPEED_CONSTANT 0.01
+#define SPEED_CONSTANT 0.001
 
 namespace matteo {
 
   class Particle {
     private:
-      float m_speed = (SPEED_CONSTANT * rand())/RAND_MAX; // math symbol: r
-      float m_direction = (2.0 * M_PI * rand()) / RAND_MAX; // math symbol: phi
+      // math symbol: r
+      float m_speed = (SPEED_CONSTANT * rand())/RAND_MAX;
+      // math symbol: phi
+      float m_direction = (2.0 * M_PI * rand()) / RAND_MAX;
 
     public:
       float m_x = 0;
@@ -23,8 +25,9 @@ namespace matteo {
       float colorprimer = 1;
 
       Particle() {};
-      void update();
-      void update(const int& colorseed);
+      // interval: time that has passed between last update and current update
+      // colorful: whether to make that particle colorful
+      void update(const int& elapsed, const int& interval, const bool& colorful);
   };
 
 }

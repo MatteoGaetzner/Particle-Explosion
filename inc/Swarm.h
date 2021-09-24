@@ -10,14 +10,14 @@ namespace matteo {
   class Swarm {
     private:
       Particle* m_pParticles;
+      unsigned int lastTime;
 
     public:
       Swarm();
       ~Swarm();
       const static unsigned int N_PARTICLES = 5000;
       const Particle* getParticles();
-      void update();
-      void update(const int& colorseed);
+      void update(const int& elapsed, const bool& colorful);
   };
 
 }
