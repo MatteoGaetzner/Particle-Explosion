@@ -113,9 +113,9 @@ namespace matteo {
     for (int y = 0; y < SCREEN_HEIGHT; ++y) {
       for (int x = 0; x < SCREEN_WIDTH; ++x) {
 
-        int totalRed = 0;
-        int totalGreen = 0;
-        int totalBlue = 0;
+        Uint16 totalRed = 0;
+        Uint16 totalGreen = 0;
+        Uint16 totalBlue = 0;
 
         /* Use the box blur kernel
          *
