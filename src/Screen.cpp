@@ -9,7 +9,7 @@
 namespace matteo {
   Screen::Screen()
     :m_window(NULL), m_renderer(NULL),
-    m_texture(NULL), m_buffer(NULL) {
+    m_texture(NULL), m_buffer1(NULL), m_buffer2(NULL) {
 
     }
 
@@ -46,9 +46,10 @@ namespace matteo {
       return false;
     }
 
-    m_buffer = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
+    m_buffer1 = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
+    m_buffer2 = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
 
-    memset(m_buffer, 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+    memset(m_buffer1, 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
 
     return true;
   }
@@ -80,24 +81,88 @@ namespace matteo {
     color <<= 8;
     color += 0xFF;
 
-    m_buffer[x + SCREEN_WIDTH * y] = color;
+    m_buffer1[x + SCREEN_WIDTH * y] = color;
   }
 
   void Screen::update() {
-    SDL_UpdateTexture(m_texture, NULL, m_buffer, SCREEN_WIDTH * sizeof(Uint32));
+    SDL_UpdateTexture(m_texture, NULL, m_buffer1, SCREEN_WIDTH * sizeof(Uint32));
     SDL_RenderClear(m_renderer);
     SDL_RenderCopy(m_renderer, m_texture, NULL, NULL);
     SDL_RenderPresent(m_renderer);
-    memset(m_buffer, 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+    // looks funny if next line gets uncommented
+    /* memset(m_buffer1, 0x00, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32)); */
   }
 
-
-
-  bool Screen::close(){
+  bool Screen::close() {
+    delete [] m_buffer1;
+    delete [] m_buffer2;
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyTexture(m_texture);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
     return true;
   }
+
+  void Screen::boxblur() {
+    // Swap buffers
+    Uint32 *tmpBuffer = m_buffer1;
+    m_buffer1 = m_buffer2;
+    m_buffer2 = tmpBuffer;
+
+    // Iterate over all pixels
+    for (int y = 0; y < SCREEN_HEIGHT; ++y) {
+      for (int x = 0; x < SCREEN_WIDTH; ++x) {
+
+        int totalRed = 0;
+        int totalGreen = 0;
+        int totalBlue = 0;
+
+        /* Use the box blur kernel
+         *
+         *    0 0 0
+         *    0 1 0
+         *    0 0 0
+         *
+         * to update the pixel */
+
+        int currentX;
+        int currentY;
+
+        for (int row = -1; row <= 1; row++) {
+          for (int col = -1; col <= 1; col++) {
+
+            currentX = x + col;
+            currentY = y + row;
+
+            // If the current pixel is actually within the screen..
+            if (currentX >= 0 && currentY >= 0 && currentX < SCREEN_WIDTH && currentY < SCREEN_HEIGHT) {
+
+              Uint32 currentColor = m_buffer2[currentY * SCREEN_WIDTH + currentX];
+
+              /* totalRed += currentColor >> 24; */
+              /* totalGreen += currentColor >> 16; */
+              /* totalBlue = currentColor >> 8; */
+              Uint8 red = currentColor >> 24;
+              Uint8 green = currentColor >> 16;
+              Uint8 blue = currentColor >> 8;
+
+              totalRed += red;
+              totalGreen += green;
+              totalBlue += blue;
+            }
+          }
+        }
+
+        // Set the pixel
+        /* std::cout << totalRed / 9 << " " <<  totalGreen / 9 << " "  << totalBlue / 9 << std::endl; */
+
+        Uint8 red = totalRed / 9;
+        Uint8 green = totalGreen / 9;
+        Uint8 blue = totalBlue / 9;
+
+        setPixel(x, y, red, green, blue);
+      }
+    }
+  }
+
 }

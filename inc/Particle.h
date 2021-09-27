@@ -5,7 +5,7 @@
 #include <math.h>
 
 #define RANDOM_0_TO_1 ((2.0 * rand())/RAND_MAX) - 1
-#define SPEED_CONSTANT 0.001
+#define SPEED_CONSTANT 0.0001
 
 namespace matteo {
 

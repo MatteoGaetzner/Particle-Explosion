@@ -43,13 +43,15 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 # Here we use shell indirection to write the output the –MM option to a file. This generates a .d dependency files which looks like this:
 #		main.o: main.cpp dice.h report.h
 # which says that main.o is dependent on main.cpp, dice.h and report.h. A similar .d file is generated for the dice.cpp source file.
+# Also new line characters, and double spaces get removed from .d files, to prevent circular dependencies, i.e. X.d: X.d
 $(OBJDIR)/%.d: $(SRCDIR)/%.cpp
 	$(CXX) $(INCDIRS) -MM $< \
-		| sed -e 's%^%$@ %' -e 's% % $(OBJDIR)/%'\ > $@
+		| tr '\n' ' ' | sed -e 's/  //' | sed -e 's%\\%%' \
+		| sed -e 's%^%$@ %' -e 's% % $(OBJDIR)/%' > $@
 
 # Pulls in the .d files, much like #include works in a C or C++ program. However, this isn’t exactly what happens. If the .d files already exist, then they are simply included in the makefile, and Make reads the dependency information from them. However, if they don’t exist (as they won’t the first time Make is run using this makefile) Make will look to see if there is a rule to create them. There is (the last rule) so Make runs the command associated with that rule to create the .d files and then re-reads the whole makefile. This time the .d files do exist (because we just created them), so they are read by the simple include mechanism.
 -include $(DEPFILES)
 
 clean:
-	rm {$(SRCDIR),$(OBJDIR)}/*.{o,d}
+	rm $(OBJDIR)/*.{o,d}
 	rm $(BINDIR)/main.out

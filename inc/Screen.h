@@ -13,7 +13,8 @@ namespace matteo {
       SDL_Window *m_window;
       SDL_Renderer *m_renderer;
       SDL_Texture *m_texture;
-      Uint32* m_buffer;
+      Uint32* m_buffer1;
+      Uint32* m_buffer2;
       Uint32 lastTime;
 
     public:
@@ -23,6 +24,7 @@ namespace matteo {
       void update();
       void setPixel(Uint32 x, Uint32 y, Uint8 red, Uint8 green, Uint8 blue);
       bool close();
+      void boxblur();
   };
 }
 #endif /* ifndef SCREEN.h */

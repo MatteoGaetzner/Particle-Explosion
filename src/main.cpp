@@ -40,6 +40,9 @@ int main()
       screen.setPixel(x, y, particle.m_red, particle.m_green, particle.m_blue);
     }
 
+    // Use blur
+    screen.boxblur();
+
     // Draw the screen
     screen.update();
 
