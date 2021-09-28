@@ -1,17 +1,18 @@
 #include <iostream>
-#include <memory>
 #include <stdlib.h>
+#include <thread>
 #include "../inc/Screen.h"
 
 #define SCREEN_MODE SDL_WINDOW_ALLOW_HIGHDPI
 /* #define SCREEN_MODE SDL_FULLSCREEN */
 
+const unsigned int PROCESSOR_COUNT = std::thread::hardware_concurrency();
+std::mutex mtx;
+
 namespace matteo {
   Screen::Screen()
     :m_window(NULL), m_renderer(NULL),
-    m_texture(NULL), m_buffer1(NULL), m_buffer2(NULL) {
-
-    }
+    m_texture(NULL), m_buffer1(NULL), m_buffer2(NULL) {}
 
 
   bool Screen::init(){
@@ -103,66 +104,85 @@ namespace matteo {
     return true;
   }
 
+  void Screen::boxblurRows(const int xStart, const int xEnd) {
+    for (int x = xStart; x < xEnd; ++x) {
+      for (int y = 0; y < SCREEN_HEIGHT; ++y) {
+        boxblurPixel(x, y);
+      }
+    }
+  }
+
+  void Screen::boxblurPixel(const int& x, const int& y) {
+    Uint16 totalRed = 0;
+    Uint16 totalGreen = 0;
+    Uint16 totalBlue = 0;
+
+    /* Use the box blur kernel
+     *
+     *    0 0 0
+     *    0 1 0
+     *    0 0 0
+     *
+     * to update the pixel */
+
+    int currentX;
+    int currentY;
+
+    for (int row = -1; row <= 1; row++) {
+      for (int col = -1; col <= 1; col++) {
+
+        currentX = x + col;
+        currentY = y + row;
+
+        // If the current pixel is actually within the screen..
+        if (currentX >= 0 && currentY >= 0 && currentX < SCREEN_WIDTH && currentY < SCREEN_HEIGHT) {
+
+          Uint32 currentColor = m_buffer2[currentY * SCREEN_WIDTH + currentX];
+
+          /* totalRed += currentColor >> 24; */
+          /* totalGreen += currentColor >> 16; */
+          /* totalBlue = currentColor >> 8; */
+          Uint8 red = currentColor >> 24;
+          Uint8 green = currentColor >> 16;
+          Uint8 blue = currentColor >> 8;
+
+          totalRed += red;
+          totalGreen += green;
+          totalBlue += blue;
+        }
+      }
+    }
+
+    // Set the pixel
+    /* std::cout << totalRed / 9 << " " <<  totalGreen / 9 << " "  << totalBlue / 9 << std::endl; */
+
+    Uint8 red = totalRed / 9;
+    Uint8 green = totalGreen / 9;
+    Uint8 blue = totalBlue / 9;
+
+    setPixel(x, y, red, green, blue);
+  }
+
   void Screen::boxblur() {
     // Swap buffers
     Uint32 *tmpBuffer = m_buffer1;
     m_buffer1 = m_buffer2;
     m_buffer2 = tmpBuffer;
 
+    // Create threads array
+    std::thread workers[PROCESSOR_COUNT+1];
+    int batchsize = SCREEN_WIDTH / PROCESSOR_COUNT;
+    int workerIdx = 0;
+
     // Iterate over all pixels
-    for (int y = 0; y < SCREEN_HEIGHT; ++y) {
-      for (int x = 0; x < SCREEN_WIDTH; ++x) {
+    for (int x = 0; x < SCREEN_WIDTH; x += batchsize) {
+      int xMax = SCREEN_WIDTH <= x + batchsize ? SCREEN_WIDTH : x + batchsize;
+      workers[workerIdx++] = std::thread(&Screen::boxblurRows, this, x, xMax);
+    }
 
-        Uint16 totalRed = 0;
-        Uint16 totalGreen = 0;
-        Uint16 totalBlue = 0;
-
-        /* Use the box blur kernel
-         *
-         *    0 0 0
-         *    0 1 0
-         *    0 0 0
-         *
-         * to update the pixel */
-
-        int currentX;
-        int currentY;
-
-        for (int row = -1; row <= 1; row++) {
-          for (int col = -1; col <= 1; col++) {
-
-            currentX = x + col;
-            currentY = y + row;
-
-            // If the current pixel is actually within the screen..
-            if (currentX >= 0 && currentY >= 0 && currentX < SCREEN_WIDTH && currentY < SCREEN_HEIGHT) {
-
-              Uint32 currentColor = m_buffer2[currentY * SCREEN_WIDTH + currentX];
-
-              /* totalRed += currentColor >> 24; */
-              /* totalGreen += currentColor >> 16; */
-              /* totalBlue = currentColor >> 8; */
-              Uint8 red = currentColor >> 24;
-              Uint8 green = currentColor >> 16;
-              Uint8 blue = currentColor >> 8;
-
-              totalRed += red;
-              totalGreen += green;
-              totalBlue += blue;
-            }
-          }
-        }
-
-        // Set the pixel
-        /* std::cout << totalRed / 9 << " " <<  totalGreen / 9 << " "  << totalBlue / 9 << std::endl; */
-
-        Uint8 red = totalRed / 9;
-        Uint8 green = totalGreen / 9;
-        Uint8 blue = totalBlue / 9;
-
-        setPixel(x, y, red, green, blue);
-      }
+    for (std::thread &worker : workers) {
+      if (worker.joinable())
+        worker.join();
     }
   }
-
 }

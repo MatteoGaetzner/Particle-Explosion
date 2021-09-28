@@ -9,6 +9,7 @@ namespace matteo {
     public:
       const static int SCREEN_WIDTH = 2000;
       const static int SCREEN_HEIGHT = 2000;
+
     private:
       SDL_Window *m_window;
       SDL_Renderer *m_renderer;
@@ -16,6 +17,11 @@ namespace matteo {
       Uint32* m_buffer1;
       Uint32* m_buffer2;
       Uint32 lastTime;
+
+    private:
+      void boxblurPixel(const int& x, const int& y);
+      // inclusive start and exclusive end
+      void boxblurRows(const int xStart, const int xEnd);
 
     public:
       Screen();

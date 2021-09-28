@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 #include "../inc/Particle.h"
 
 /* Conversion from polar coordinates to cartesian coordinates, see:

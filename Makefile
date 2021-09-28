@@ -15,7 +15,10 @@ LINKER := g++
 # Default: ./inc/
 INCDIRS := -I$(INCDIR)
 # Compiler flags - INCLUDES DEBUGGING FLAG -g, for production remove this!
-CXXFLAGS := -std=c++20 -Wall -Wextra -pedantic -g
+# Optional:
+#		-pthread: for using threads
+# CXXFLAGS := -std=c++20 -Wall -Wextra -pedantic -g -pthread
+CXXFLAGS := -std=c++20 -O2 -pthread
 # Linker flags
 # If you use SDL2, uncomment the following line
 LINKERFLAGS := -lSDL2
