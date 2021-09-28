@@ -7,8 +7,8 @@
 namespace matteo {
   class Screen {
     public:
-      const static int SCREEN_WIDTH = 1000;
-      const static int SCREEN_HEIGHT = 1000;
+      const static int SCREEN_WIDTH = 2000;
+      const static int SCREEN_HEIGHT = 2000;
     private:
       SDL_Window *m_window;
       SDL_Renderer *m_renderer;
