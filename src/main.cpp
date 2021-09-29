@@ -18,6 +18,7 @@ int main()
   }
 
   const bool COLORFUL = true;
+  const bool BLUR = true;
   matteo::Swarm swarm;
 
   const matteo::Particle* const particles = swarm.getParticles();
@@ -41,7 +42,9 @@ int main()
     }
 
     // Use blur
-    screen.boxblur();
+    if (BLUR) {
+      screen.boxblur();
+    }
 
     // Draw the screen
     screen.update();

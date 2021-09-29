@@ -2,3 +2,4 @@ main
 main.out
 src/*.d
 src/*.o
+obj/*
