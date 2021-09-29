@@ -7,7 +7,6 @@
 /* #define SCREEN_MODE SDL_FULLSCREEN */
 
 const unsigned int PROCESSOR_COUNT = std::thread::hardware_concurrency();
-std::mutex mtx;
 
 namespace matteo {
   Screen::Screen()
@@ -174,7 +173,7 @@ namespace matteo {
     int batchsize = SCREEN_WIDTH / PROCESSOR_COUNT;
     int workerIdx = 0;
 
-    // Iterate over all pixels
+    // Iterate over all pixels in batches
     for (int x = 0; x < SCREEN_WIDTH; x += batchsize) {
       int xMax = SCREEN_WIDTH <= x + batchsize ? SCREEN_WIDTH : x + batchsize;
       workers[workerIdx++] = std::thread(&Screen::boxblurRows, this, x, xMax);

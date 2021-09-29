@@ -18,6 +18,7 @@ namespace matteo {
       const static unsigned int N_PARTICLES = 5000;
       const Particle* getParticles();
       void update(const int& elapsed, const bool& colorful);
+      void updateBatch(const int& elapsed, const int& interval, const bool& colorful, const unsigned int batchStartIdx, const unsigned int batchEndIdx);
   };
 
 }

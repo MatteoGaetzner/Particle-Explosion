@@ -29,6 +29,7 @@ namespace matteo {
       bool processEvents();
       void update();
       void setPixel(Uint32 x, Uint32 y, Uint8 red, Uint8 green, Uint8 blue);
+      void setScreen(Uint32** coordinates, Uint8** colors);
       bool close();
       void boxblur();
   };
