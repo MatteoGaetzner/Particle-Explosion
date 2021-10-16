@@ -51,6 +51,7 @@ void matteo::Swarm::update(const int& elapsed, const bool& colorful)
     workers[workerIdx++] = std::thread(&Swarm::updateBatch, this, elapsed, interval, colorful, batchStartIdx, batchEndIdx);
   }
 
+  // Wait for threads to finish
   for (std::thread& worker : workers) {
     if (worker.joinable()) {
       worker.join();
